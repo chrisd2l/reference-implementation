@@ -9,7 +9,7 @@ provider:
 plugins:
   - serverless-plugin-common-excludes
   - serverless-plugin-include-dependencies
-  
+
 custom:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
@@ -17,7 +17,10 @@ custom:
 package:
   individually: true
   excludeDevDependencies: false
+  include:
+    - package.json
   exclude:
+    - ./*
     - serverless/**
 
 functions: ${file(./serverless/functions.yml)}
