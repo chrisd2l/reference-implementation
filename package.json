@@ -10,6 +10,11 @@
     "type": "git",
     "url": "git+https://github.com/alpha-lambda/reference-implementation.git"
   },
+  "keywords": [
+    "lambda",
+    "serverless",
+    "example"
+  ],
   "author": "",
   "license": "MIT",
   "bugs": {
@@ -18,5 +23,10 @@
   "homepage": "https://github.com/alpha-lambda/reference-implementation#readme",
   "dependencies": {
     "@alpha-lambda/handler": "^1.2.1"
+  },
+  "devDependencies": {
+    "serverless": "^1.54.0",
+    "serverless-plugin-common-excludes": "^2.4.0",
+    "serverless-plugin-include-dependencies": "^3.2.1"
   }
 }
