@@ -1,0 +1,114 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  Data Stack for Reference Implementation
+
+Parameters:
+
+  namespace:
+    Description: Prefix to apply to each resource
+    Type: String
+
+Outputs:
+
+  TableName:
+    Description: Name of the Table
+    Value:
+      Ref: Table
+    Export:
+      Name:
+        Fn::Sub: ${namespace}-table-name
+
+  TableArn:
+    Description: ARN of the Table
+    Value:
+      Fn::GetAtt: Table.Arn
+    Export:
+      Name:
+        Fn::Sub: ${namespace}-table-arn
+
+  StreamArn:
+    Description: ARN of the DynamoDB Stream
+    Value:
+      Fn::GetAtt: Table.StreamArn
+    Export:
+      Name:
+        Fn::Sub: ${namespace}-stream-arn
+
+  StreamDeadLetterQueueUrl:
+    Description: URL of dead letter queue for stream events
+    Value:
+      Ref: StreamDeadLetterQueue
+    Export:
+      Name:
+        Fn::Sub: ${namespace}-stream-dlq-url
+
+  StreamDeadLetterQueueArn:
+    Description: ARN of dead letter queue for stream events
+    Value:
+      Fn::GetAtt: StreamDeadLetterQueue.Arn
+    Export:
+      Name:
+        Fn::Sub: ${namespace}-stream-dlq-arn
+
+Resources:
+
+  MonitoringTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName:
+        Fn::Sub: ${namespace}-monitoring
+
+  Table:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    Properties:
+      TableName:
+        Fn::Sub: ${namespace}-data
+      BillingMode: PAY_PER_REQUEST
+      SSESpecification:
+        SSEEnabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      AttributeDefinitions:
+        - AttributeName: h
+          AttributeType: S
+        - AttributeName: r
+          AttributeType: S
+      KeySchema:
+        - AttributeName: h
+          KeyType: HASH
+        - AttributeName: r
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  StreamDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    DeletionPolicy: Retain
+    Properties:
+      QueueName:
+        Fn::Sub: ${namespace}-stream-dlq
+      MessageRetentionPeriod: 1209600
+      VisibilityTimeout: 60
+
+  StreamDeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName:
+        Fn::Sub: ${namespace}-stream-dlq
+      AlarmDescription: "Messages visible in DLQ"
+      Namespace: "AWS/SQS"
+      MetricName: "ApproximateNumberOfMessagesVisible"
+      Statistic: "Sum"
+      ComparisonOperator: "GreaterThanThreshold"
+      Threshold: 0
+      EvaluationPeriods: 1
+      Period: 60
+      AlarmActions:
+        - Ref: MonitoringTopic
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt: StreamDeadLetterQueue.QueueName

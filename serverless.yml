@@ -1,18 +1,41 @@
 service: alpha-lambda-reference
 
+custom:
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  namespace: ${self:service}-${self:custom.stage}
+  bootstrap:
+    file: serverless/bootstrap.yml
+    stack: ${self:custom.namespace}-bootstrap
+    parameters:
+      - ParameterKey: namespace
+        ParameterValue: ${self:custom.namespace}
+    exports:
+      tableName:
+        Fn::ImportValue: ${self:custom.namespace}-table-name
+      tableArn:
+        Fn::ImportValue: ${self:custom.namespace}-table-arn
+      streamArn:
+        Fn::ImportValue: ${self:custom.namespace}-stream-arn
+      streamDlqUrl:
+        Fn::ImportValue: ${self:custom.namespace}-stream-dlq-url
+      streamDlqArn:
+        Fn::ImportValue: ${self:custom.namespace}-stream-dlq-arn
+
 provider:
   name: aws
   runtime: nodejs10.x
   stage: ${self:custom.stage}
   region: ${self:custom.region}
+  environment:
+    NAMESPACE: ${self:custom.namespace}
+    TABLE_NAME: ${self:custom.bootstrap.exports.tableName}
+    STREAM_DLQ_URL: ${self:custom.bootstrap.exports.streamDlqUrl}
 
 plugins:
   - serverless-plugin-common-excludes
   - serverless-plugin-include-dependencies
-
-custom:
-  stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  - serverless-plugin-bootstrap
 
 package:
   individually: true

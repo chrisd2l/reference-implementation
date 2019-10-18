@@ -3,6 +3,6 @@
 const { api } = require('../handler');
 
 module.exports.handler = api()
-  .use(() => {
-    return 'Hello, world!';
+  .use((event, context) => {
+    return { event, context };
   });

@@ -30,6 +30,7 @@
     "mocha": "^6.2.1",
     "nyc": "^14.1.1",
     "serverless": "^1.54.0",
+    "serverless-plugin-bootstrap": "^2.0.7",
     "serverless-plugin-common-excludes": "^2.4.0",
     "serverless-plugin-include-dependencies": "^3.2.1"
   },
