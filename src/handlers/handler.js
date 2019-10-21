@@ -7,3 +7,7 @@ const config = require('../config');
 module.exports.api = () =>
   alpha()
     .with({ config });
+
+module.exports.stream = () =>
+  alpha()
+    .with({ config });

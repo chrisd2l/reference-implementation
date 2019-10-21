@@ -1,2 +1,9 @@
 hello:
   handler: src/handlers/api/hello.handler
+
+taskScheduler:
+  handler: src/handlers/worker/taskScheduler.handler
+  events:
+    - stream:
+        type: dynamodb
+        arn: ${self:custom.bootstrap.exports.streamArn}
