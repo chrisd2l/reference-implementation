@@ -36,6 +36,7 @@ plugins:
   - serverless-plugin-common-excludes
   - serverless-plugin-include-dependencies
   - serverless-plugin-bootstrap
+  - serverless-plugin-split-stacks
 
 package:
   individually: true
