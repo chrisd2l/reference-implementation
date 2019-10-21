@@ -120,3 +120,13 @@ Resources:
         - Name: QueueName
           Value:
             Fn::GetAtt: StreamDeadLetterQueue.QueueName
+
+  BillingTaskQueue:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: templates/sqs-queue.yml
+      Parameters:
+        name:
+          Fn::Sub: ${namespace}-billing-tasks
+        monitoringTopicARN:
+          Ref: MonitoringTopic

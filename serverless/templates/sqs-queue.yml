@@ -1,0 +1,141 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  A basic queue with a corresponding dead-letter queue
+
+Parameters:
+
+  name:
+    Description: Name of the queue
+    Type: String
+
+  retentionPeriod:
+    Description: Retention period for queue messages
+    Type: Number
+    Default: 1209600
+
+  maxReceiveCount:
+    Description: Maximum number of attempts before a message goes to dead letter
+    Type: Number
+    Default: 5
+
+  visibilityTimeout:
+    Description: Message visibility timeout
+    Type: Number
+    Default: 300
+
+  ageAlarmThreshold:
+    Description: Maximum time to process message
+    Type: Number
+    Default: 120
+
+  monitoringTopicARN:
+    Description: ARN of the monitoring SNS topic to connect alarms to
+    Type: String
+
+Outputs:
+
+  ARN:
+    Description: ARN of the queue
+    Value:
+      Fn::GetAtt: Queue.Arn
+    Export:
+      Name:
+        Fn::Sub: ${name}-queue-arn
+
+  URL:
+    Description: URL of the queue
+    Value:
+      Ref: Queue
+    Export:
+      Name:
+        Fn::Sub: ${name}-queue-url
+
+Resources:
+
+  Queue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:
+          Ref: name
+      MessageRetentionPeriod:
+        Ref: retentionPeriod
+      VisibilityTimeout:
+        Ref: visibilityTimeout
+      RedrivePolicy:
+          deadLetterTargetArn:
+              Fn::GetAtt: DeadLetterQueue.Arn
+          maxReceiveCount:
+            Ref: maxReceiveCount
+
+  DeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName:
+        Fn::Sub: ${name}-deadletter
+      MessageRetentionPeriod:
+        Ref: retentionPeriod
+      VisibilityTimeout:
+        Ref: visibilityTimeout
+
+  DeadLetterQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Id: "sqspolicy"
+        Statement:
+            -
+              Sid: "First"
+              Effect: "Allow"
+              Principal: "*"
+              Action: "sqs:SendMessage"
+              Resource:
+                  Fn::GetAtt: DeadLetterQueue.Arn
+              Condition:
+                  ArnEquals:
+                      aws:SourceArn:
+                          Fn::GetAtt: Queue.Arn
+      Queues:
+        - Ref: DeadLetterQueue
+
+  QueueAgeAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName:
+        Fn::Sub: ${name}-age
+      AlarmDescription: "Old messages in the queue"
+      Namespace: "AWS/SQS"
+      MetricName: "ApproximateAgeOfOldestMessage"
+      Statistic: "Maximum"
+      ComparisonOperator: "GreaterThanThreshold"
+      Threshold:
+        Ref: ageAlarmThreshold
+      EvaluationPeriods: 1
+      Period: 60
+      AlarmActions:
+        - Ref: monitoringTopicARN
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt: Queue.QueueName
+
+  DeadLetterQueueAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName:
+        Fn::Sub: ${name}-deadletter
+      AlarmDescription: "Messages visible in DLQ"
+      Namespace: "AWS/SQS"
+      MetricName: "ApproximateNumberOfMessagesVisible"
+      Statistic: "Sum"
+      ComparisonOperator: "GreaterThanThreshold"
+      Threshold: 0
+      EvaluationPeriods: 1
+      Period: 60
+      AlarmActions:
+        - Ref: monitoringTopicARN
+      Dimensions:
+        - Name: QueueName
+          Value:
+            Fn::GetAtt: DeadLetterQueue.QueueName
