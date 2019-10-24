@@ -8,6 +8,11 @@ module.exports.api = () =>
   alpha()
     .with({ config });
 
+module.exports.sqs = () =>
+  alpha()
+    .with({ config });
+
+
 module.exports.stream = () =>
   alpha()
     .with({ config });

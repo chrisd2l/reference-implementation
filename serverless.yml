@@ -11,7 +11,7 @@ custom:
     automatic: true
     number: 3
   bootstrap:
-    file: serverless/bootstrap.yml
+    file: serverless/bootstrap/data.yml
     stack: ${self:custom.namespace}-bootstrap
     parameters:
       - ParameterKey: namespace
@@ -29,6 +29,8 @@ custom:
         Fn::ImportValue: ${self:custom.namespace}-stream-dlq-arn
       monitoringTopicArn:
         Fn::ImportValue: ${self:custom.namespace}-monitoring-topic-arn
+      tasksQueueArn:
+        Fn::ImportValue: ${self:custom.namespace}-tasks-queue-arn
 
 provider:
   name: aws

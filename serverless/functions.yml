@@ -1,9 +1,17 @@
 hello:
   handler: src/handlers/api/hello.handler
 
-taskScheduler:
-  handler: src/handlers/worker/taskScheduler.handler
+streamListener:
+  handler: src/handlers/worker/streamListener.handler
   events:
     - stream:
         type: dynamodb
+        batchSize: 1000
         arn: ${self:custom.bootstrap.exports.streamArn}
+
+taskProcessor:
+  handler: src/handlers/worker/taskProcessor.handler
+  events:
+    - sqs:
+        batchSize: 10
+        arn: ${self:custom.bootstrap.exports.tasksQueueArn}

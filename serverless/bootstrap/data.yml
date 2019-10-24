@@ -54,7 +54,7 @@ Outputs:
   MonitoringTopicArn:
     Description: ARN of monitoring SNS topic
     Value:
-      Fn::GetAtt: MonitoringTopic.Arn
+      Ref: MonitoringTopic
     Export:
       Name:
         Fn::Sub: ${namespace}-monitoring-topic-arn
@@ -121,12 +121,12 @@ Resources:
           Value:
             Fn::GetAtt: StreamDeadLetterQueue.QueueName
 
-  BillingTaskQueue:
+  TaskQueue:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: templates/sqs-queue.yml
       Parameters:
         name:
-          Fn::Sub: ${namespace}-billing-tasks
+          Fn::Sub: ${namespace}-tasks
         monitoringTopicARN:
           Ref: MonitoringTopic
