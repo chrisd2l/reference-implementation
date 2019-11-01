@@ -11,7 +11,7 @@ const { TYPE } = require('./const');
 module.exports = async (context, { data, postId, userId } = {}) => {
   assert(data, 'missing postId');
   assert(postId, 'missing postId');
-  assert(userId, 'missing postId');
+  assert(userId, 'missing userId');
 
   const {
     config: { tableName },
