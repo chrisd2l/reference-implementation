@@ -23,11 +23,11 @@ Deploys all non-infrastructure things (lambdas, alarms, etc).
 - testing framework
 - use async & promise.all
 - whats the difference between driver and model
+- move middleware into context(just use tasks?)
 
 # Folders
 
-- context
-- deploy
-- handlers
-- service: what gets deployed
+- context: all code that will run in the service
+- deploy: how we deploy
+- service: what gets deployed()
 - test
