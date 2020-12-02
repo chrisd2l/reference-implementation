@@ -4,7 +4,7 @@ const initializeLog = require('./log');
 const initializeRequest = require('./request');
 const initializeResponse = require('./response');
 
-const initializeMiddleware = (c) => {
+const initialize = c => {
   const log = initializeLog(c);
   const request = initializeRequest(c);
   const response = initializeResponse(c);
@@ -14,6 +14,6 @@ const initializeMiddleware = (c) => {
     request,
     response,
   };
-}
+};
 
-module.exports = initializeMiddleware;
+module.exports = initialize;

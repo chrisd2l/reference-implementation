@@ -1,15 +1,14 @@
 'use strict';
 
 const alpha = require('@alpha-lambda/handler');
-const AWS = require('aws-sdk');
 
 const ajv = require('../ajv');
 
-const initializeMiddleware = require('../middleware');
+const initializeMiddleware = require('./middleware');
 const initializeContext = require('../context');
 
-const handler = () => {
-  const c = initializec();
+const lambdaHandler = () => {
+  const c = initializeContext();
   const middleware = initializeMiddleware(c);
 
   return alpha()
@@ -31,6 +30,6 @@ const apiHandler = ({ schema = true } = {}) => {
 
 module.exports = {
   api: apiHandler,
-  sqs: handler
-  stream: handler,
+  sqs: lambdaHandler,
+  stream: lambdaHandler,
 }

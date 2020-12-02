@@ -3,7 +3,15 @@
 const post = require('./post');
 const vote = require('./vote');
 
-module.exports = {
-  post,
-  vote,
+const initializeModel = async (c) => {
+  try {
+    return {
+      post,
+      vote,
+    };
+  } catch (e) {
+    throw new c.e.internal.FailedToIntialize('model', e);
+  }
 };
+
+module.exports = initializeModel;

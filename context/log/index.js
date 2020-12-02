@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = (c) => {
+const initialize = async (c) => {
   const serializers = pino.stdSerializers;
   const redact = {
     paths: [
@@ -35,7 +35,7 @@ module.exports = (c) => {
       functionName,
       functionVersion,
       awsRequestId,
-      xRayTraceId
+      xRayTraceId,
     });
     c.log.trace({ event }, 'incoming event');
 
@@ -47,4 +47,6 @@ module.exports = (c) => {
     }
   };
 }
+
+module.exports = initialize;
 

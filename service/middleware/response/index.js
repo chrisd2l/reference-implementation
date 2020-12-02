@@ -4,6 +4,8 @@ const pino = require('pino');
 
 const { ResponseBuilder } = require('lambda-envelope');
 
+const intialize
+
 module.exports = (c) => {
   const builder = new ResponseBuilder({
     bucket: config.responseBucket,

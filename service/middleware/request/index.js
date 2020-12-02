@@ -2,8 +2,8 @@
 
 module.exports = () => {
   return (event, c, next) => {
-    const { clientc = {} } = c;
-    const { requestId = c.awsRequestId } = clientc;
+    const { clientContext = {} } = c;
+    const { requestId = c.awsRequestId } = clientContext;
 
     c.state.setRequestId(requestId);
 

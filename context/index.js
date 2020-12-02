@@ -2,24 +2,33 @@
 
 const initializeDriver = require('./driver');
 const initializeError = require('./error');
-const initializeLog = require('./../log');
-const initializeModel = require('./../model');
-const initializeState = require('./../state');
+const initializeLog = require('./log');
+const initializeModel = require('./model');
+const initializeState = require('./state');
+const initializeTasks = require('./tasks');
 
-module.exports = () => {
+const initialize = async () => {
+  let error;
+  try {
+    error = initializeError();
+  } catch (e) {
+    throw new Error('Failed to initialize errors', e);
+  }
 
-  const error = initializeError();
-  const log = initializeLog(error);
-  const state = initializeState(log, error);
-  const driver = initializeDriver(log, error, state);
-  const model = initializeModel(log, error, state, driver);
+  const log = await initializeLog(error);
+  const state = await initializeState(log, error);
+  const driver = await initializeDriver(log, error, state);
+  const model = await initializeModel(log, error, state, driver);
+  const tasks = await initializeTasks(log, error, state, driver, model);
 
-  const c = {
+  return {
     d: driver,
     e: error,
     l: log,
     m: model,
     s: state,
-  }
-  return c;
+    t: tasks,
+  };
 }
+
+module.exports = initialize;
