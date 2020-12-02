@@ -6,7 +6,7 @@ const AWS = require('aws-sdk');
 const ajv = require('../ajv');
 
 const initializeMiddleware = require('../middleware');
-const initializec = require('../c');
+const initializeContext = require('../context');
 
 const handler = () => {
   const c = initializec();

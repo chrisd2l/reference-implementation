@@ -2,7 +2,7 @@
 
 const uuid = require('uuid');
 
-const config = require('../c/state/config');
+const config = require('../context/state/config');
 
 module.exports = function() {
 

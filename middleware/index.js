@@ -1,40 +1,19 @@
 'use strict';
 
-const _ = require('lodash');
-const pino = require('pino');
-const { ResponseBuilder } = require('lambda-envelope');
+const initializeLog = require('./log');
+const initializeRequest = require('./request');
+const initializeResponse = require('./response');
 
-const config = require('../config');
+const initializeMiddleware = (c) => {
+  const log = initializeLog(c);
+  const request = initializeRequest(c);
+  const response = initializeResponse(c);
 
-module.exports = {
-  log,
-  request,
+  return {
+    log,
+    request,
+    response,
+  };
+}
 
-  response() {
-    const builder = new ResponseBuilder({
-      bucket: config.responseBucket,
-    });
-
-    return async (event, c, next) => {
-      try {
-        const response = await next();
-        return builder.build({
-          statusCode: 200,
-          body: response,
-        });
-      } catch (err) {
-        const response = builder.build({
-          statusCode: err.statusCode || 500,
-          body: _.omit(err, 'stack'),
-        });
-
-        if (response.statusCode < 500) {
-          return response;
-        }
-
-        c.log.error({ err }, 'failed to process request');
-        throw response;
-      }
-    };
-  },
-};
+module.exports = initializeMiddleware;

@@ -3,7 +3,7 @@
 const lambdaTester = require('lambda-tester');
 const uuid = require('uuid');
 
-const putVote = require('../c/state/handler/api/putVote');
+const putVote = require('../context/state/handler/api/putVote');
 const setupTestHarness = require('./setup-test-harness');
 
 describe('putVote', function() {

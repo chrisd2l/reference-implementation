@@ -1,6 +1,6 @@
 'use strict';
 
-const { sqs } = require('../handler');
+const { sqs } = require('../../handler');
 const Task = require('../../tasks');
 
 module.exports.handler = sqs()

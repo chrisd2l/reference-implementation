@@ -2,26 +2,24 @@
 
 const Ajv = require('ajv');
 
-const LambdaError = require('../c/error/error');
-
 const ajv = new Ajv({
   allErrors: true,
   verbose: true,
 });
 
 module.exports = {
-  compile(schema) {
+  compile(c, schema) {
     return ajv.compile(schema);
   },
 
-  validate(validator, object, options) {
+  validate(c, validator, object, options) {
     const valid = validator(object);
 
     if (valid) {
       return;
     }
 
-    throw new LambdaError({
+    throw new c.e.internal.LambdaError({
       message: ajv.errorsText(validator.errors, options),
       statusCode: 400,
     });
