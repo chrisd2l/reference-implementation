@@ -8,16 +8,16 @@ const {
 } = require('./compression');
 const getParentId = require('./getParentId');
 
-module.exports = async (context, { postId, count } = {}) => {
+module.exports = async (c, { postId, count } = {}) => {
   assert(postId, 'missing postId');
   assert(typeof count !== 'undefined', 'missing count');
 
   const {
     config: { tableName },
     drivers: { dynamodb },
-  } = context;
+  } = c;
 
-  const parentId = getParentId(context, postId);
+  const parentId = getParentId(c, postId);
   const now = new Date().toISOString();
 
   const params = {
@@ -47,7 +47,7 @@ module.exports = async (context, { postId, count } = {}) => {
     ReturnValues: 'ALL_NEW',
   };
 
-  const result = await dynamodb.update(context, params);
+  const result = await dynamodb.update(c, params);
 
   return expand(result.Attributes);
 };

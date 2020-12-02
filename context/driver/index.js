@@ -8,13 +8,18 @@ const {
 
 const Notifier = require('./nofitier');
 
-const initializeDrivers = async (s) => {
-  return {
-    notifier: new Notifier(s.c.notifier),
-    dynamodb: new DynamoDBDocumentClient({ level: 'debug' }),
-    dynamodbConverter: AWS.DynamoDB.Converter,
-    sqs: new SQS({ level: 'debug' }),
-    xray: new XRay({ level: 'debug', ...s.c.xRay }),
+const initializeDrivers = async (log, error, state) => {
+  const level = 'debug';
+  try {
+    return {
+      notifier: new Notifier(state.c.notifier),
+      dynamodb: new DynamoDBDocumentClient(level),
+      dynamodbConverter: AWS.DynamoDB.Converter,
+      sqs: new SQS(level),
+      xray: new XRay({ level, ...state.c.xRay }),
+    };
+  } catch (e) {
+    error.internal.FailedToIntialize(__dirname/*needs testing*/, e);
   }
 };
 

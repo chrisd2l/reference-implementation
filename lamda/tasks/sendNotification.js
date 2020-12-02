@@ -2,7 +2,7 @@
 
 module.exports = {
   type: 'sendNotification',
-  schedule(context, tasks) {
+  schedule(c, tasks) {
     c.log.debug({ tasks }, 'scheduling sendNotification tasks');
 
     const { sendNotification } = c.config.tasks;
@@ -10,17 +10,17 @@ module.exports = {
 
     const messages = tasks.map(task => ({ body: task.toJSON() }));
 
-    return sqs.send(context, sendNotification.queueUrl, messages);
+    return sqs.send(c, sendNotification.queueUrl, messages);
   },
-  execute(context, tasks) {
+  execute(c, tasks) {
     const { notifier } = c.drivers;
     const { post } = c.models;
     const { sendNotification } = c.config.tasks;
 
     const parentPosts = Promise.map(tasks, task => {
       const { postId } = task.detail;
-      const parentId = post.getParentId(context, postId);
-      return post.get(context, parentId);
+      const parentId = post.getParentId(c, postId);
+      return post.get(c, parentId);
     });
 
     const usersToNotify = parentPosts.reduce((acc, parent) => {
@@ -43,6 +43,6 @@ module.exports = {
       };
     });
 
-    return notifier.send(context, notifications);
+    return notifier.send(c, notifications);
   },
 };

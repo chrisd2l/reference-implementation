@@ -51,7 +51,7 @@ provider:
     - ${self:custom.permissions.xRayWriter}
   access: ${file(./serverless/access.yml)}
   environment:
-    AWS_XRAY_CONTEXT_MISSING: LOG_ERROR
+    AWS_XRAY_c_MISSING: LOG_ERROR
     AWS_XRAY_ENABLED: ${self:provider.tracing}
     NAMESPACE: ${self:custom.namespace}
     RESPONSE_BUCKET_NAME: ${self:custom.bootstrap.exports.responseBucketName}

@@ -1,5 +1,9 @@
 'use strict';
 
-module.exports = {
+const initializeLogger = () => {
 
+};
+
+module.exports = {
+  initializeLogger,
 };

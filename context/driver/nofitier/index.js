@@ -16,7 +16,7 @@ module.exports = class Notifier {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  async send(context, notifications) {
+  async send(c, notifications) {
     assert(notifications, 'missing notifications');
 
     if (notifications.length === 0) {
@@ -26,7 +26,7 @@ module.exports = class Notifier {
     const { xray } = c.drivers;
 
     c.log.debug({ notifications }, 'sending notifications');
-    return xray.trace(context, 'notifier.send', subsegment => {
+    return xray.trace(c, 'notifier.send', subsegment => {
       subsegment.addAnnotation('count', notifications.length);
 
       const duration = this._getRandRequestDuration();

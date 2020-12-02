@@ -8,7 +8,7 @@ const {
 } = require('./compression');
 const { TYPE } = require('./const');
 
-module.exports = async (context, { data, postId, userId } = {}) => {
+module.exports = async (c, { data, postId, userId } = {}) => {
   assert(data, 'missing data');
   assert(postId, 'missing postId');
   assert(userId, 'missing userId');
@@ -16,7 +16,7 @@ module.exports = async (context, { data, postId, userId } = {}) => {
   const {
     config: { tableName },
     drivers: { dynamodb },
-  } = context;
+  } = c;
 
   const now = new Date().toISOString();
 
@@ -49,7 +49,7 @@ module.exports = async (context, { data, postId, userId } = {}) => {
     ReturnValues: 'ALL_NEW',
   };
 
-  const result = await dynamodb.update(context, params);
+  const result = await dynamodb.update(c, params);
 
   return expand(result.Attributes);
 };

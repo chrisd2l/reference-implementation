@@ -17,7 +17,7 @@ describe('createPost', function() {
         data: 'Computer Science',
         userId: uuid.v4(),
       })
-      .context(this.context)
+      .c(this.c)
       .expectResolve();
   });
 });

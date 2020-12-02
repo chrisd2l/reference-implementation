@@ -4,7 +4,7 @@ const { stream } = require('../handler');
 const Task = require('../../tasks');
 
 module.exports.handler = stream()
-  .use(async (event, context) => {
+  .use(async (event, c) => {
     const { dlqEnabled, dlqUrl } = c.config.stream;
     const { dynamodbConverter, sqs } = c.drivers;
     const { post, vote } = c.models;
@@ -54,10 +54,10 @@ module.exports.handler = stream()
       return memo;
     }, { tasks: [], deadLetters: [] });
 
-    await Task.schedule(context, tasks);
+    await Task.schedule(c, tasks);
 
     if (deadLetters.length > 0) {
       c.log.debug({ dlqUrl, deadLetters }, 'sending to dlq');
-      await sqs.sendToDLQ(context, dlqUrl, deadLetters);
+      await sqs.sendToDLQ(c, dlqUrl, deadLetters);
     }
   });

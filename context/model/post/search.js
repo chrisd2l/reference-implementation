@@ -8,13 +8,13 @@ const {
 } = require('./compression');
 const { SORT_BY } = require('./const');
 
-module.exports = async (context, { parentId, sortBy, from, to } = {}) => {
+module.exports = async (c, { parentId, sortBy, from, to } = {}) => {
   assert(parentId, 'missing parentId');
 
   const {
     config: { tableName },
     drivers: { dynamodb },
-  } = context;
+  } = c;
 
   const params = {
     TableName: tableName,
@@ -55,7 +55,7 @@ module.exports = async (context, { parentId, sortBy, from, to } = {}) => {
     }
   }
 
-  const result = await dynamodb.query(context, params);
+  const result = await dynamodb.query(c, params);
 
   return result.Items.map(expand);
 };

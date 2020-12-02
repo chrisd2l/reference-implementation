@@ -8,15 +8,15 @@ const {
 } = require('./compression');
 const getParentId = require('./getParentId');
 
-module.exports = async (context, postId) => {
+module.exports = async (c, postId) => {
   assert(postId, 'missing postId');
 
-  const parentId = getParentId(context, postId);
+  const parentId = getParentId(c, postId);
 
   const {
     config: { tableName },
     drivers: { dynamodb },
-  } = context;
+  } = c;
 
   const params = {
     TableName: tableName,

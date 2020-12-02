@@ -4,11 +4,11 @@ const { sqs } = require('../handler');
 const Task = require('../../tasks');
 
 module.exports.handler = sqs()
-  .use((event, context) => {
+  .use((event, c) => {
     const tasks = event.Records.map(({ body }) => {
       const json = JSON.parse(body);
       return Task.fromJSON(json);
     });
 
-    return Task.execute(context, tasks);
+    return Task.execute(c, tasks);
   });

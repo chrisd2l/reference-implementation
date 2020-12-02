@@ -2,12 +2,12 @@
 
 const uuid = require('uuid');
 
-const config = require('../context/state/config');
+const config = require('../c/state/config');
 
 module.exports = function() {
 
   before(function() {
-    this.context = {
+    this.c = {
       getRemainingTimeInMillis: () => 5 * 60 * 1000, // 5 minutes
       config,
       requestId: uuid.v4(),

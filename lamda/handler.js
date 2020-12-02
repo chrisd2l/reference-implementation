@@ -4,12 +4,12 @@ const alpha = require('@alpha-lambda/handler');
 const AWS = require('aws-sdk');
 
 const ajv = require('../ajv');
-const middleware = require('./middleware');
 
-const initializeContext = require('../context');
+const initializeMiddleware = require('../middleware');
+const initializec = require('../c');
 
 const handler = () => {
-  const c = initializeContext();
+  const c = initializec();
   const middleware = initializeMiddleware(c);
 
   return alpha()

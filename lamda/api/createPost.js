@@ -1,26 +1,21 @@
 'use strict';
 
-const _ = require('lodash');
-
 const { api } = require('../handler');
 const post = require('../../models/post');
 
 const schema = {
   type: 'object',
   required: [
+    'data',
     'parentId',
-    'sortBy',
+    'userId',
   ],
   properties: {
-    from: { type: 'string' },
+    data: { type: 'string' },
     parentId: { type: 'string' },
-    sortBy: {
-      type: 'string',
-      enum: _.values(post.CONST.SORT_BY),
-    },
-    to: { type: 'string' },
+    userId: { type: 'string' },
   },
 };
 
 module.exports.handler = api({ schema })
-  .use((event, context) => post.search(context, event));
+  .use((event, c) => post.create(c, event));

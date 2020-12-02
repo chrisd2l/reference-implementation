@@ -22,4 +22,4 @@ const schema = {
 };
 
 module.exports.handler = api({ schema })
-  .use((event, context) => vote.put(context, event));
+  .use((event, c) => vote.put(c, event));

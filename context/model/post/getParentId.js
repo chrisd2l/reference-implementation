@@ -2,7 +2,7 @@
 
 const assert = require('assert');
 
-module.exports = (context, postId) => {
+module.exports = (c, postId) => {
   assert(postId, 'missing postId');
 
   const { config: { delimiter } } = c.config;

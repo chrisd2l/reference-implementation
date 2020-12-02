@@ -2,7 +2,7 @@
 
 module.exports = {
   type: 'updateVoteCount',
-  schedule(context, tasks) {
+  schedule(c, tasks) {
     c.log.debug({ tasks }, 'scheduling updateVoteCount tasks');
 
     const { updateVoteCount } = c.config.tasks;
@@ -10,9 +10,9 @@ module.exports = {
 
     const messages = tasks.map(task => ({ body: task.toJSON() }));
 
-    return sqs.send(context, updateVoteCount.queueUrl, messages);
+    return sqs.send(c, updateVoteCount.queueUrl, messages);
   },
-  execute(context, tasks) {
+  execute(c, tasks) {
     const { post } = c.models;
 
     const votes = tasks.reduce((acc, task) => {
@@ -28,7 +28,7 @@ module.exports = {
     }, new Map());
 
     return Promise.all(Array.from(votes.entries()).map(([postId, count]) => {
-      return post.updateVoteCount(context, { postId, count });
+      return post.updateVoteCount(c, { postId, count });
     }));
   },
 };

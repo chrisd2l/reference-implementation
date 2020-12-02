@@ -1,21 +1,25 @@
 'use strict';
 
 const initializeDriver = require('./driver');
-const error = require('./error');
-const model = require('./../model');
-const state = require('./../state');
+const initializeError = require('./error');
+const initializeLog = require('./../log');
+const initializeModel = require('./../model');
+const initializeState = require('./../state');
 
-module.exports = async () => {
+module.exports = () => {
 
-  const error = require('./error');
-  const state = initializeState(error);
-  const driver = initializeDriver(error, state);
-  const model = initializeModel(error, state, driver);
+  const error = initializeError();
+  const log = initializeLog(error);
+  const state = initializeState(log, error);
+  const driver = initializeDriver(log, error, state);
+  const model = initializeModel(log, error, state, driver);
 
-  const context = {
+  const c = {
     d: driver,
     e: error,
+    l: log,
     m: model,
     s: state,
   }
+  return c;
 }
