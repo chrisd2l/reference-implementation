@@ -1,23 +1,23 @@
 createPost:
-  handler: src/handlers/api/createPost.handler
+  handler: src/handler/api/createPost.handler
   allowAccess: api
   iamRoleStatements:
     - ${self:custom.permissions.dynamodbWriter}
 
 searchPosts:
-  handler: src/handlers/api/searchPosts.handler
+  handler: src/handler/api/searchPosts.handler
   allowAccess: api
   iamRoleStatements:
     - ${self:custom.permissions.dynamodbReader}
 
 putVote:
-  handler: src/handlers/api/putVote.handler
+  handler: src/handler/api/putVote.handler
   allowAccess: api
   iamRoleStatements:
     - ${self:custom.permissions.dynamodbWriter}
 
 sendNotificationTasksWorker:
-  handler: src/handlers/worker/taskProcessor.handler
+  handler: src/handler/worker/taskProcessor.handler
   events:
     - sqs:
         batchSize: 10
@@ -26,7 +26,7 @@ sendNotificationTasksWorker:
     - ${self:custom.permissions.sqsReader}
 
 streamListener:
-  handler: src/handlers/worker/streamListener.handler
+  handler: src/handler/worker/streamListener.handler
   environment:
     UPDATE_VOTE_COUNT_TASKS_QUEUE_URL: ${self:custom.bootstrap.exports.updateVoteCountTasksQueueUrl}
   iamRoleStatements:
@@ -38,7 +38,7 @@ streamListener:
         arn: ${self:custom.bootstrap.exports.streamArn}
 
 updateVoteCountTasksWorker:
-  handler: src/handlers/worker/taskProcessor.handler
+  handler: src/handler/worker/taskProcessor.handler
   events:
     - sqs:
         batchSize: 10

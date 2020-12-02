@@ -11,10 +11,10 @@ module.exports = {
     const serializers = pino.stdSerializers;
     const redact = {
       paths: [
-        'context.config',
-        'context.drivers',
-        'context.log',
-        'context.models',
+        'c.config',
+        'c.drivers',
+        'c.log',
+        'c.models',
         'event.Records[*].dynamodb',
       ],
       remove: true,
@@ -22,28 +22,32 @@ module.exports = {
 
     const log = pino({ level, redact, serializers, base: null });
 
-    return async (event, context, next) => {
+    return async (event, c, next) => {
       const {
         awsRequestId,
-        drivers: { xray },
         functionName,
         functionVersion,
         requestId,
-      } = context;
+      } = c;
 
-      const xRayTraceId = xray.getXRayTraceId();
+      const xRayTraceId = c.d.xray.getXRayTraceId();
 
-      Object.assign(context, {
+      Object.assign(c, {
         log: log.child({ requestId }),
       });
 
-      context.log.info({ functionName, functionVersion, awsRequestId, xRayTraceId });
-      context.log.trace({ event }, 'incoming event');
+      c.log.info({
+        functionName,
+        functionVersion,
+        awsRequestId,
+        xRayTraceId
+      });
+      c.log.trace({ event }, 'incoming event');
 
       try {
         return await next();
       } catch (err) {
-        context.log.error({ err }, 'unhandled err');
+        c.log.error({ err }, 'unhandled err');
         throw err;
       }
     };
@@ -82,7 +86,7 @@ module.exports = {
           return response;
         }
 
-        context.log.error({ err }, 'failed to process request');
+        c.log.error({ err }, 'failed to process request');
         throw response;
       }
     };

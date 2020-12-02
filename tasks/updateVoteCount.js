@@ -3,17 +3,17 @@
 module.exports = {
   type: 'updateVoteCount',
   schedule(context, tasks) {
-    context.log.debug({ tasks }, 'scheduling updateVoteCount tasks');
+    c.log.debug({ tasks }, 'scheduling updateVoteCount tasks');
 
-    const { updateVoteCount } = context.config.tasks;
-    const { sqs } = context.drivers;
+    const { updateVoteCount } = c.config.tasks;
+    const { sqs } = c.drivers;
 
     const messages = tasks.map(task => ({ body: task.toJSON() }));
 
     return sqs.send(context, updateVoteCount.queueUrl, messages);
   },
   execute(context, tasks) {
-    const { post } = context.models;
+    const { post } = c.models;
 
     const votes = tasks.reduce((acc, task) => {
       const { postId, value } = task.detail;

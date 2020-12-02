@@ -3,7 +3,7 @@
 const lambdaTester = require('lambda-tester');
 const uuid = require('uuid');
 
-const createPost = require('../src/handlers/api/createPost');
+const createPost = require('../src/handler/api/createPost');
 const setupTestHarness = require('./setup-test-harness');
 
 describe('createPost', function() {

@@ -5,16 +5,16 @@ const Task = require('../../tasks');
 
 module.exports.handler = stream()
   .use(async (event, context) => {
-    const { dlqEnabled, dlqUrl } = context.config.stream;
-    const { dynamodbConverter, sqs } = context.drivers;
-    const { post, vote } = context.models;
+    const { dlqEnabled, dlqUrl } = c.config.stream;
+    const { dynamodbConverter, sqs } = c.drivers;
+    const { post, vote } = c.models;
     const { Records } = event;
 
     const { tasks, deadLetters } = Records.reduce((memo, record) => {
       const { NewImage, OldImage } = record.dynamodb;
 
       try {
-        context.log.debug({ record }, 'decoding dynamodb record');
+        c.log.debug({ record }, 'decoding dynamodb record');
         const newImage = dynamodbConverter.unmarshall(NewImage);
         const oldImage = dynamodbConverter.unmarshall(OldImage);
 
@@ -57,7 +57,7 @@ module.exports.handler = stream()
     await Task.schedule(context, tasks);
 
     if (deadLetters.length > 0) {
-      context.log.debug({ dlqUrl, deadLetters }, 'sending to dlq');
+      c.log.debug({ dlqUrl, deadLetters }, 'sending to dlq');
       await sqs.sendToDLQ(context, dlqUrl, deadLetters);
     }
   });

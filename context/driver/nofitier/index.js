@@ -23,9 +23,9 @@ module.exports = class Notifier {
       return;
     }
 
-    const { xray } = context.drivers;
+    const { xray } = c.drivers;
 
-    context.log.debug({ notifications }, 'sending notifications');
+    c.log.debug({ notifications }, 'sending notifications');
     return xray.trace(context, 'notifier.send', subsegment => {
       subsegment.addAnnotation('count', notifications.length);
 

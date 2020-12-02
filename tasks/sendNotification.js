@@ -3,19 +3,19 @@
 module.exports = {
   type: 'sendNotification',
   schedule(context, tasks) {
-    context.log.debug({ tasks }, 'scheduling sendNotification tasks');
+    c.log.debug({ tasks }, 'scheduling sendNotification tasks');
 
-    const { sendNotification } = context.config.tasks;
-    const { sqs } = context.drivers;
+    const { sendNotification } = c.config.tasks;
+    const { sqs } = c.drivers;
 
     const messages = tasks.map(task => ({ body: task.toJSON() }));
 
     return sqs.send(context, sendNotification.queueUrl, messages);
   },
   execute(context, tasks) {
-    const { notifier } = context.drivers;
-    const { post } = context.models;
-    const { sendNotification } = context.config.tasks;
+    const { notifier } = c.drivers;
+    const { post } = c.models;
+    const { sendNotification } = c.config.tasks;
 
     const parentPosts = Promise.map(tasks, task => {
       const { postId } = task.detail;

@@ -2,7 +2,7 @@
 
 const Ajv = require('ajv');
 
-const LambdaError = require('./error');
+const LambdaError = require('../context/error/error');
 
 const ajv = new Ajv({
   allErrors: true,
